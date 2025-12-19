@@ -69,8 +69,9 @@ const StatsCards = () => {
   console.log('StatsCards - totalDownloadCount:', totalDownloadCount);
   console.log('StatsCards - isFilesDownloadLoading:', isFilesDownloadLoading);
 
-  // API Call 데이터에서 실제 호출 건수 계산
-  const totalApiCallCount = apiCallData?.data?.reduce((sum, item) => sum + (item.호출건수 || 0), 0) || 0;
+  // API 호출 건수 계산 - monthly_stats의 total_api_calls 우선 사용, 없으면 api_call 테이블에서 계산
+  const totalApiCallCount = latestStats?.total_api_calls || 
+    apiCallData?.data?.reduce((sum, item) => sum + (item.호출건수 || 0), 0) || 0;
 
   // openData 테이블에서 갱신 현황 분석 - 기타를 갱신 완료에 합계
   const openDataStatusSummary = supabaseData?.data ? (() => {
