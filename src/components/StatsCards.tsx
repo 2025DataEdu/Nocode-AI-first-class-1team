@@ -28,11 +28,11 @@ const StatsCards = () => {
     isLoading: isFilesDownloadLoading
   } = useFilesDownload();
 
-  // API에서 가져온 totalCount 사용, 로딩 중이거나 데이터가 없으면 기본값 사용
-  const totalDatasetCount = apiData?.totalCount || 24892;
+  // API에서 가져온 totalCount (전체 공공데이터) 사용
+  const totalDatasetCount = apiData?.totalCount || 17285;
 
-  // Supabase에서 가져온 국토교통부 데이터 수
-  const nationalTransportDataCount = supabaseData?.totalCount || 0;
+  // API에서 가져온 matchCount (국토교통부 데이터 수) 사용
+  const nationalTransportDataCount = apiData?.matchCount || supabaseData?.totalCount || 675;
 
   // files_download 테이블에서 가져온 전체 레코드 수를 다운로드 수로 사용
   const totalDownloadCount = filesDownloadData?.totalRecords || 0;

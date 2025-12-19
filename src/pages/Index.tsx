@@ -79,7 +79,7 @@ const Index = () => {
     const apiTopData = apiCallData?.data?.filter(item => item.호출건수 && item.호출건수 > 0)?.sort((a, b) => (b.호출건수 || 0) - (a.호출건수 || 0))?.slice(0, 10)?.map((item, index) => ({
       rank: index + 1,
       name: item.목록명 || '데이터명 없음',
-      institution: item.등록기관 || '기관명 없음',
+      institution: '국토교통부',
       usage: item.호출건수 || 0,
       change: `+${(Math.random() * 20 + 1).toFixed(1)}%`
     })) || [];

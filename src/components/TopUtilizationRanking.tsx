@@ -19,7 +19,7 @@ const TopUtilizationRanking = () => {
       .map((item, index) => ({
         rank: index + 1,
         name: item.목록명 || '데이터명 없음',
-        institution: item.등록기관 || '기관명 없음',
+        institution: '국토교통부',
         usage: item.호출건수 || 0,
         change: `+${(Math.random() * 20 + 1).toFixed(1)}%` // 실제 변화율 데이터가 없으므로 임시값
       }));
