@@ -174,7 +174,7 @@ const getMockData = (): PublicDataResponse => {
       }
     ],
     currentCount: 8,
-    totalCount: 95775,  // 공공데이터포털 전체 데이터셋
-    matchCount: 1481    // 국토교통부 데이터셋
+    totalCount: 113060,  // 공공데이터포털 전체 (open-data-list + dataset)
+    matchCount: 2156     // 국토교통부 데이터 (open-data-list + dataset)
   };
 };
