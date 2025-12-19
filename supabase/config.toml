@@ -1,1 +1,7 @@
 project_id = "oszwhosuxvggoywpntwy"
+
+[functions.sync-public-data]
+verify_jwt = false
+
+[functions.chat-ai]
+verify_jwt = false
