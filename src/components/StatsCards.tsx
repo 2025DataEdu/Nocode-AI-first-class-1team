@@ -31,8 +31,8 @@ const StatsCards = () => {
   // API에서 가져온 totalCount (전체 공공데이터) 사용
   const totalDatasetCount = apiData?.totalCount || 17285;
 
-  // API에서 가져온 matchCount (국토교통부 데이터 수) 사용
-  const nationalTransportDataCount = apiData?.matchCount || supabaseData?.totalCount || 675;
+  // 국토교통부 데이터 수 - API totalCount 값 사용 (17285개)
+  const nationalTransportDataCount = apiData?.totalCount || 17285;
 
   // files_download 테이블에서 가져온 전체 레코드 수를 다운로드 수로 사용
   const totalDownloadCount = filesDownloadData?.totalRecords || 0;
