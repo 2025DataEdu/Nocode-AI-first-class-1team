@@ -183,7 +183,7 @@ const StatsCards = () => {
                   </div>
                 </div>
                 <div className="text-3xl font-bold text-blue-900 mb-2">
-                  {isSupabaseLoading ? (
+                  {isLoading ? (
                     <div className="flex items-center space-x-2">
                       <div className="w-6 h-6 border-2 border-blue-300 border-t-blue-600 rounded-full animate-spin"></div>
                       <span className="text-lg">로딩중...</span>
