@@ -22,8 +22,8 @@ interface PublicDataResponse {
   matchCount?: number; // 국토교통부 데이터 개수
 }
 
-// 공공데이터포털 API (국토교통부 목록 전용)
-const API_BASE_URL = 'https://api.odcloud.kr/api/15077093/v1/open-data-list';
+// 공공데이터포털 dataset API (더 정확한 데이터)
+const API_BASE_URL = 'https://api.odcloud.kr/api/15077093/v1/dataset';
 const API_KEY = 'oV%2B46tfJ4OXQwIoLnlilg2wCXoxrwHY2%2BAWuK60otTY8aXinFk%2FK2%2F%2Fcp7zPL6n61Sz91HCrZEyZohIaAH24pw%3D%3D';
 
 export const usePublicData = (page: number = 1, perPage: number = 1000) => {
@@ -31,11 +31,11 @@ export const usePublicData = (page: number = 1, perPage: number = 1000) => {
     queryKey: ['publicData', page, perPage],
     queryFn: async (): Promise<PublicDataResponse> => {
       try {
-        console.log('국토교통부 API 호출 시작...');
+        console.log('공공데이터포털 dataset API 호출 시작...');
         
-        // 국토교통부 데이터만 필터링하는 API 호출
+        // 국토교통부 데이터만 필터링하는 API 호출 (title LIKE 국토교통부)
         const response = await fetch(
-          `${API_BASE_URL}?page=${page}&perPage=${perPage}&cond%5Blist_title%3A%3ALIKE%5D=%EA%B5%AD%ED%86%A0%EA%B5%90%ED%86%B5%EB%B6%80&serviceKey=${API_KEY}`
+          `${API_BASE_URL}?page=${page}&perPage=${perPage}&cond%5Btitle%3A%3ALIKE%5D=%EA%B5%AD%ED%86%A0%EA%B5%90%ED%86%B5%EB%B6%80&serviceKey=${API_KEY}`
         );
         
         console.log('API 응답 상태:', response.status);
@@ -174,7 +174,7 @@ const getMockData = (): PublicDataResponse => {
       }
     ],
     currentCount: 8,
-    totalCount: 17285,
-    matchCount: 675 // 국토교통부 데이터 개수
+    totalCount: 95775,  // 공공데이터포털 전체 데이터셋
+    matchCount: 1481    // 국토교통부 데이터셋
   };
 };
