@@ -1,10 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Eye, Download, FileText, Database, TrendingUp, Users, AlertTriangle, CheckCircle, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Eye, Download, FileText, Database, TrendingUp, Users, AlertTriangle, CheckCircle, Clock, RefreshCw } from "lucide-react";
 import { usePublicData } from "@/hooks/usePublicDataAPI";
 import { useOpenData } from "@/hooks/useOpenData";
 import { useApiCall } from "@/hooks/useApiCall";
 import { useMonthlyStats } from "@/hooks/useMonthlyStats";
 import { useFilesDownload } from "@/hooks/useFilesDownload";
+import { useSyncPublicData } from "@/hooks/useSyncPublicData";
+import { useToast } from "@/hooks/use-toast";
 
 const StatsCards = () => {
   const {
@@ -27,12 +30,36 @@ const StatsCards = () => {
     data: filesDownloadData,
     isLoading: isFilesDownloadLoading
   } = useFilesDownload();
+  
+  const syncMutation = useSyncPublicData();
+  const { toast } = useToast();
 
-  // API에서 가져온 totalCount (전체 공공데이터) 사용
-  const totalDatasetCount = apiData?.totalCount || 17285;
+  const handleSync = async () => {
+    try {
+      await syncMutation.mutateAsync();
+      toast({
+        title: "동기화 완료",
+        description: "공공데이터 정보가 업데이트되었습니다.",
+      });
+    } catch (error) {
+      toast({
+        title: "동기화 실패",
+        description: "데이터 동기화 중 오류가 발생했습니다.",
+        variant: "destructive",
+      });
+    }
+  };
 
-  // 국토교통부 데이터 수 - API totalCount 값 사용 (17285개)
-  const nationalTransportDataCount = apiData?.totalCount || 17285;
+  // monthly_stats에서 최신 데이터 가져오기
+  const latestStats = monthlyStatsData && monthlyStatsData.length > 0 
+    ? monthlyStatsData[monthlyStatsData.length - 1] 
+    : null;
+
+  // API에서 가져온 totalCount (전체 공공데이터) 사용 - monthly_stats 우선
+  const totalDatasetCount = latestStats?.total_datasets || apiData?.totalCount || 17285;
+
+  // 국토교통부 데이터 수 - monthly_stats 우선, 없으면 API 값 사용
+  const nationalTransportDataCount = latestStats?.national_transport_datasets || apiData?.totalCount || 17285;
 
   // files_download 테이블에서 가져온 전체 레코드 수를 다운로드 수로 사용
   const totalDownloadCount = filesDownloadData?.totalRecords || 0;
@@ -139,6 +166,15 @@ const StatsCards = () => {
                 <p className="text-sm text-gray-500">전체 및 국토교통부 현황</p>
               </div>
             </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSync}
+              disabled={syncMutation.isPending}
+              className="h-8 px-2"
+            >
+              <RefreshCw className={`h-4 w-4 ${syncMutation.isPending ? 'animate-spin' : ''}`} />
+            </Button>
           </div>
         </CardHeader>
         <CardContent className="flex-1 flex flex-col justify-between space-y-6">
