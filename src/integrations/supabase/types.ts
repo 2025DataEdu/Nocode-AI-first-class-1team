@@ -14,7 +14,135 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      api_call: {
+        Row: {
+          created_at: string
+          id: string
+          목록명: string | null
+          통계일자: string | null
+          호출건수: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          목록명?: string | null
+          통계일자?: string | null
+          호출건수?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          목록명?: string | null
+          통계일자?: string | null
+          호출건수?: number | null
+        }
+        Relationships: []
+      }
+      files_download: {
+        Row: {
+          created_at: string
+          ID: number
+          다운로드수: number | null
+          목록명: string | null
+          통계일자: string | null
+        }
+        Insert: {
+          created_at?: string
+          ID?: number
+          다운로드수?: number | null
+          목록명?: string | null
+          통계일자?: string | null
+        }
+        Update: {
+          created_at?: string
+          ID?: number
+          다운로드수?: number | null
+          목록명?: string | null
+          통계일자?: string | null
+        }
+        Relationships: []
+      }
+      monthly_stats: {
+        Row: {
+          created_at: string
+          id: string
+          month: number
+          national_transport_datasets: number | null
+          outdated_datasets: number | null
+          total_api_calls: number | null
+          total_datasets: number | null
+          total_downloads: number | null
+          updated_datasets: number | null
+          year: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          month: number
+          national_transport_datasets?: number | null
+          outdated_datasets?: number | null
+          total_api_calls?: number | null
+          total_datasets?: number | null
+          total_downloads?: number | null
+          updated_datasets?: number | null
+          year: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          month?: number
+          national_transport_datasets?: number | null
+          outdated_datasets?: number | null
+          total_api_calls?: number | null
+          total_datasets?: number | null
+          total_downloads?: number | null
+          updated_datasets?: number | null
+          year?: number
+        }
+        Relationships: []
+      }
+      openData: {
+        Row: {
+          created_at: string
+          id: string
+          갱신주기: string | null
+          다운로드수: number | null
+          데이터형식: string | null
+          등록일: string | null
+          목록명: string | null
+          분류체계: string | null
+          제공기관: string | null
+          조회수: number | null
+          "차기등록 예정일": string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          갱신주기?: string | null
+          다운로드수?: number | null
+          데이터형식?: string | null
+          등록일?: string | null
+          목록명?: string | null
+          분류체계?: string | null
+          제공기관?: string | null
+          조회수?: number | null
+          "차기등록 예정일"?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          갱신주기?: string | null
+          다운로드수?: number | null
+          데이터형식?: string | null
+          등록일?: string | null
+          목록명?: string | null
+          분류체계?: string | null
+          제공기관?: string | null
+          조회수?: number | null
+          "차기등록 예정일"?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
