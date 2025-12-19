@@ -55,11 +55,11 @@ const StatsCards = () => {
     ? monthlyStatsData[monthlyStatsData.length - 1] 
     : null;
 
-  // API에서 가져온 totalCount (전체 공공데이터) 사용 - monthly_stats 우선
-  const totalDatasetCount = latestStats?.total_datasets || apiData?.totalCount || 17285;
+  // 공공데이터포털 전체 데이터 수 - monthly_stats의 total_datasets 또는 API의 totalCount 사용
+  const totalDatasetCount = latestStats?.total_datasets || apiData?.totalCount || 95775;
 
-  // 국토교통부 데이터 수 - monthly_stats 우선, 없으면 API 값 사용
-  const nationalTransportDataCount = latestStats?.national_transport_datasets || apiData?.totalCount || 17285;
+  // 국토교통부 데이터 수 - monthly_stats의 national_transport_datasets 또는 API의 matchCount 사용
+  const nationalTransportDataCount = latestStats?.national_transport_datasets || apiData?.matchCount || 1481;
 
   // files_download 테이블에서 가져온 전체 레코드 수를 다운로드 수로 사용
   const totalDownloadCount = filesDownloadData?.totalRecords || 0;
