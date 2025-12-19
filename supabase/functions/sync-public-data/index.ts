@@ -5,8 +5,9 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// 공공데이터포털 dataset API (더 정확한 데이터)
-const API_URL = 'https://api.odcloud.kr/api/15077093/v1/dataset'
+// 공공데이터포털 API URLs
+const OPEN_DATA_LIST_URL = 'https://api.odcloud.kr/api/15077093/v1/open-data-list'
+const DATASET_URL = 'https://api.odcloud.kr/api/15077093/v1/dataset'
 const API_KEY = 'oV+46tfJ4OXQwIoLnlilg2wCXoxrwHY2+AWuK60otTY8aXinFk/K2//cp7zPL6n61Sz91HCrZEyZohIaAH24pw=='
 
 Deno.serve(async (req) => {
@@ -20,27 +21,45 @@ Deno.serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-    console.log('공공데이터포털 dataset API 호출 시작...')
+    console.log('공공데이터포털 API 호출 시작...')
 
-    // 국토교통부 데이터 조회 API 호출 (title LIKE 국토교통부)
     const encodedApiKey = encodeURIComponent(API_KEY)
-    const apiUrl = `${API_URL}?page=1&perPage=1&cond%5Btitle%3A%3ALIKE%5D=%EA%B5%AD%ED%86%A0%EA%B5%90%ED%86%B5%EB%B6%80&serviceKey=${encodedApiKey}`
     
-    console.log('API URL:', apiUrl)
+    // 1. open-data-list API 호출 (오픈 API 목록)
+    const openDataListUrl = `${OPEN_DATA_LIST_URL}?page=1&perPage=1&cond%5Blist_title%3A%3ALIKE%5D=%EA%B5%AD%ED%86%A0%EA%B5%90%ED%86%B5%EB%B6%80&serviceKey=${encodedApiKey}`
+    console.log('open-data-list API 호출:', openDataListUrl)
     
-    const response = await fetch(apiUrl)
-    
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error('API 응답 오류:', errorText)
-      throw new Error(`API 호출 실패: ${response.status}`)
+    const openDataListResponse = await fetch(openDataListUrl)
+    if (!openDataListResponse.ok) {
+      throw new Error(`open-data-list API 호출 실패: ${openDataListResponse.status}`)
     }
+    const openDataListResult = await openDataListResponse.json()
+    console.log('open-data-list 응답:', { 
+      totalCount: openDataListResult.totalCount, 
+      matchCount: openDataListResult.matchCount 
+    })
 
-    const result = await response.json()
-    console.log('API 응답:', { 
-      totalCount: result.totalCount,   // 공공데이터포털 전체 데이터셋
-      matchCount: result.matchCount,   // 국토교통부 데이터셋
-      currentCount: result.currentCount 
+    // 2. dataset API 호출 (파일 데이터셋)
+    const datasetUrl = `${DATASET_URL}?page=1&perPage=1&cond%5Btitle%3A%3ALIKE%5D=%EA%B5%AD%ED%86%A0%EA%B5%90%ED%86%B5%EB%B6%80&serviceKey=${encodedApiKey}`
+    console.log('dataset API 호출:', datasetUrl)
+    
+    const datasetResponse = await fetch(datasetUrl)
+    if (!datasetResponse.ok) {
+      throw new Error(`dataset API 호출 실패: ${datasetResponse.status}`)
+    }
+    const datasetResult = await datasetResponse.json()
+    console.log('dataset 응답:', { 
+      totalCount: datasetResult.totalCount, 
+      matchCount: datasetResult.matchCount 
+    })
+
+    // 3. 합계 계산
+    const totalPublicData = (openDataListResult.totalCount || 0) + (datasetResult.totalCount || 0)
+    const totalMolit = (openDataListResult.matchCount || 0) + (datasetResult.matchCount || 0)
+    
+    console.log('합계 계산:', {
+      totalPublicData,   // 공공데이터포털 전체 (17285 + 95775 = 113060)
+      totalMolit         // 국토교통부 데이터 (675 + 1481 = 2156)
     })
 
     const now = new Date()
@@ -63,8 +82,8 @@ Deno.serve(async (req) => {
     const statsData = {
       year,
       month,
-      total_datasets: result.totalCount || 95775,           // 공공데이터포털 전체
-      national_transport_datasets: result.matchCount || 1481, // 국토교통부 데이터셋
+      total_datasets: totalPublicData,      // 공공데이터포털 전체 (totalCount 합계)
+      national_transport_datasets: totalMolit, // 국토교통부 데이터 (matchCount 합계)
     }
 
     console.log('저장할 데이터:', statsData)
@@ -101,8 +120,18 @@ Deno.serve(async (req) => {
       JSON.stringify({
         success: true,
         data: {
-          totalCount: result.totalCount,      // 공공데이터포털 전체
-          matchCount: result.matchCount,      // 국토교통부 데이터셋
+          openDataList: {
+            totalCount: openDataListResult.totalCount,
+            matchCount: openDataListResult.matchCount
+          },
+          dataset: {
+            totalCount: datasetResult.totalCount,
+            matchCount: datasetResult.matchCount
+          },
+          combined: {
+            totalPublicData,   // 공공데이터포털 전체
+            totalMolit         // 국토교통부 데이터
+          },
           year,
           month
         }
